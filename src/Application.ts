@@ -10,6 +10,7 @@ class MyLink {
 class MyNode {
     x: number;
     y: number;
+    fixed: boolean;
     constructor(public id: any) {
     }
 }
@@ -40,12 +41,19 @@ window.onload = () => {
         .enter().append("line")
         .attr("class", "link");
 
+    const drag = force.drag()
+        .on("dragstart", dragstart);
+
     const node = svg.selectAll(".node")
         .data(nodes)
         .enter().append("circle")
         .attr("class", "node")
         .attr("r", 5)
-        .call(force.drag);
+        .call(drag);
+
+    function dragstart(d: MyNode) {
+        d3.select(this).classed("fixed", d.fixed = true);
+    }
 
     force.on("tick", function() {
         link.attr("x1", function(d: MyLink) { return d.source.x; })
