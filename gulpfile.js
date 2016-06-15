@@ -1,25 +1,16 @@
-var gulp = require('gulp'); 
-var bowerMain = require('bower-main');
-var concat = require('gulp-concat');
-var ts = require('gulp-typescript');
-var sourcemaps = require('gulp-sourcemaps');
+var gulp = require('gulp'), 
+    bowerMain = require('bower-main'),
+    concat = require('gulp-concat'),
+    ts = require('gulp-typescript'),
+    sourcemaps = require('gulp-sourcemaps'),
+    browserify = require("browserify"),
+    transform = require("vinyl-transform"),
+    tsify = require("tsify");
 
-var bowerMinFiles = bowerMain('js', 'min.js').minified;
+var bFiles = bowerMain('js', 'min.js');
 
 gulp.task('concBower', function() {
-    return gulp.src(bowerMinFiles)
+    return gulp.src(bFiles.minified.concat(bFiles.minifiedNotFound))
                .pipe(concat("bower.js"))
                .pipe(gulp.dest('js'));
-});
-
-gulp.task('tsc', function() {
-    return gulp
-      .src("src/*.ts")
-      .pipe(sourcemaps.init())
-         .pipe(ts({
-              target: "es5"
-              , module: "commonjs"
-          }))
-      .pipe(sourcemaps.write())
-      .pipe(gulp.dest("temp"));
 });
