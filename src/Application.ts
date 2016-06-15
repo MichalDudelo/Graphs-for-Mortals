@@ -22,11 +22,13 @@ window.onload = () => {
         .attr("width", width)
         .attr("height", height);
 
+    svg.on("contextmenu", () => event.preventDefault());
+
     const nodes = [1, 2, 3, 4, 5]
         .map(e => new MyNode(e));
 
     const links = [[1, 2], [2, 3], [3, 4], [3, 5], [4, 5]]
-        .map(pair => { return new MyLink(nodes[pair[0] - 1], nodes[pair[1] - 1]) });
+        .map(pair => new MyLink(nodes[pair[0] - 1], nodes[pair[1] - 1]));
 
     const force = d3.layout.force()
         .nodes(nodes)
@@ -38,18 +40,36 @@ window.onload = () => {
 
     const link = svg.selectAll(".link")
         .data(links)
-        .enter().append("line")
-        .attr("class", "link");
+        .enter()
+        .append("line")
+        .classed("link", true);
 
     const drag = force.drag()
         .on("dragstart", dragstart);
 
     const node = svg.selectAll(".node")
         .data(nodes)
-        .enter().append("circle")
-        .attr("class", "node")
-        .attr("r", 5)
+        .enter()
+        .append("circle")
+        .classed("node", true)
+        .classed("not-visited", true)
+        .attr("r", 12)
         .call(drag);
+
+    let active: d3.Selection<any> = d3.select(".node").classed("active", true);
+
+    node.on("contextmenu", function(d: MyNode) {
+        event.preventDefault();
+        active.classed("not-visited", true)
+          .classed("active", false);
+        active = d3.select(this);
+        active.classed("not-visited", false)
+          .classed("active", true);
+    });
+
+    node.on("dblclick", function(d: MyNode) {
+        d3.select(this).classed("fixed", d.fixed = false);
+    });
 
     function dragstart(d: MyNode) {
         d3.select(this).classed("fixed", d.fixed = true);

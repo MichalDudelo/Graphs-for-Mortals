@@ -15,8 +15,3 @@
 .active {
     fill: yellow;
 }
-
-svg {
-    stroke: #000;
-    stroke-width: 1.5px;
-}

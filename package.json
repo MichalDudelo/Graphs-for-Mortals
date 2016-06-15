@@ -19,7 +19,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "init": "npm install && bower install && tsd install",
-    "compile": "browserify src/Application.ts -p [ tsify --target=es5 --module=commonjs ]  --debug > js/app.js && gulp concBower"
+    "compile": "browserify src/Application.ts -p [ tsify --target=es5 --module=commonjs ]  --debug > js/app.js"
   },
   "author": "",
   "license": "ISC"
