@@ -1,0 +1,27 @@
+{
+  "name": "graphs-for-mortals",
+  "authors": [
+    "Julian Rubin <rubin94@gmail.com>"
+  ],
+  "description": "BoE project",
+  "main": "",
+  "keywords": [
+    "graph",
+    "algorithm",
+    "simple",
+    "easy"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "webcola": "^3.1.3",
+    "d3": "^3.5.17"
+  }
+}

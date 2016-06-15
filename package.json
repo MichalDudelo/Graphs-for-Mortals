@@ -1,0 +1,23 @@
+{
+  "name": "graphs-for-mortals",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "bower-main": "^0.2.14",
+    "exorcist": "^0.4.0",
+    "gulp": "^3.9.1",
+    "gulp-browserify": "^0.5.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-typescript": "^2.13.6"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "init": "npm install && bower install && tsd install",
+    "compile": "browserify src/Application.ts -p [ tsify --target=es5 --module=commonjs ]  --debug > js/app.js && gulp concBower"
+  },
+  "author": "",
+  "license": "ISC"
+}

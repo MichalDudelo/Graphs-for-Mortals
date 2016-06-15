@@ -1,0 +1,22 @@
+.link {
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.node {
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.not-visited {
+    fill: white;
+}
+
+.active {
+    fill: yellow;
+}
+
+svg {
+    stroke: #000;
+    stroke-width: 1.5px;
+}
