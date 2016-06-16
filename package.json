@@ -7,19 +7,14 @@
   "devDependencies": {
     "bower-main": "^0.2.14",
     "browserify": "^13.0.1",
-    "exorcist": "^0.4.0",
     "gulp": "^3.9.1",
     "gulp-browserify": "^0.5.1",
     "gulp-concat": "^2.6.0",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-typescript": "^2.13.6",
     "tsify": "^0.16.0",
-    "vinyl-transform": "^1.0.0"
+    "vinyl-source-stream": "^1.1.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "init": "npm install && bower install && tsd install",
-    "compile": "browserify src/Application.ts -p [ tsify --target=es5 --module=commonjs ]  --debug > js/app.js"
+    "init": "npm install && bower install && tsd install"
   },
   "author": "",
   "license": "ISC"
