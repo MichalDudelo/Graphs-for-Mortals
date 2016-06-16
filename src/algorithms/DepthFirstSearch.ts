@@ -1,4 +1,6 @@
-class DepthFirstSearch {
+import { Algorithm } from "./Algorithm"
+
+class DepthFirstSearch implements Algorithm {
 
 }
 

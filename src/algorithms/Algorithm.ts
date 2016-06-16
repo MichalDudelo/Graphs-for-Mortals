@@ -1,6 +1,6 @@
 import { Graph } from "../Graph"
 
-class Algorithm {
+interface Algorithm {
 
 }
 
