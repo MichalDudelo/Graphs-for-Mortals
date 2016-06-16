@@ -58,20 +58,26 @@ window.onload = () => {
 
     let active: d3.Selection<any> = d3.select(".node").classed("active", true);
 
-    node.on("contextmenu", function(d: MyNode) {
+    /** defaultPrevented is checked to distinguish 
+        drag and click events. */
+    node.on("click", function() {
+        if (event.defaultPrevented)
+            return;
         event.preventDefault();
         active.classed("not-visited", true)
-          .classed("active", false);
+            .classed("active", false);
         active = d3.select(this);
         active.classed("not-visited", false)
-          .classed("active", true);
+            .classed("active", true);
     });
 
-    node.on("dblclick", function(d: MyNode) {
+    node.on("contextmenu", function(d: MyNode) {
+        event.preventDefault();
         d3.select(this).classed("fixed", d.fixed = false);
     });
 
     function dragstart(d: MyNode) {
+        event.stopPropagation();
         d3.select(this).classed("fixed", d.fixed = true);
     }
 
