@@ -82,12 +82,12 @@ window.onload = () => {
     }
 
     force.on("tick", function() {
-        link.attr("x1", function(d: MyLink) { return d.source.x; })
-            .attr("y1", function(d: MyLink) { return d.source.y; })
-            .attr("x2", function(d: MyLink) { return d.target.x; })
-            .attr("y2", function(d: MyLink) { return d.target.y; });
+        link.attr("x1", link => link.source.x)
+            .attr("y1", link => link.source.y)
+            .attr("x2", link => link.target.x)
+            .attr("y2", link => link.target.y);
 
-        node.attr("cx", function(d: MyNode) { return d.x; })
-            .attr("cy", function(d: MyNode) { return d.y; });
+        node.attr("cx", node => node.x)
+            .attr("cy", node => node.y);
     });
 };
