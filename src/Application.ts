@@ -1,17 +1,18 @@
 /// <reference path="../typings/tsd.d.ts" />
-//import * as validator from "./ZipCodeValidator"
+import * as graph from "./Graph"
+import * as algorithms from "./algorithms/Algorithm"
 
-class MyLink {
-    constructor (public source: MyNode,
-        public target: MyNode) {
+class MyLink<T> {
+    constructor (public source: MyNode<T>,
+        public target: MyNode<T>) {
     };
 }
 
-class MyNode {
+class MyNode<T> {
     x: number;
     y: number;
     fixed: boolean;
-    constructor(public id: any) {
+    constructor(public id: T) {
     }
 }
 
@@ -21,6 +22,13 @@ window.onload = () => {
         .append("svg")
         .attr("width", width)
         .attr("height", height);
+
+    svg.append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", width)
+        .attr("height", height)
+        .classed("svg-border", true);
 
     svg.on("contextmenu", () => event.preventDefault());
 
@@ -71,12 +79,14 @@ window.onload = () => {
             .classed("active", true);
     });
 
-    node.on("contextmenu", function(d: MyNode) {
+    type AnyNode = MyNode<any>;
+
+    node.on("contextmenu", function(d: AnyNode) {
         event.preventDefault();
         d3.select(this).classed("fixed", d.fixed = false);
     });
 
-    function dragstart(d: MyNode) {
+    function dragstart(d: AnyNode) {
         event.stopPropagation();
         d3.select(this).classed("fixed", d.fixed = true);
     }
