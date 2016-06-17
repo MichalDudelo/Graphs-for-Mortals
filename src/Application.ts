@@ -37,6 +37,12 @@ window.onload = () => {
     const links = [[0,1], [0,5], [1,5], [5,4], [1,4], [3,4], [2,3], [1,2], [2,5]]
         .map(pair => new MyLink(nodes[pair[0]], nodes[pair[1]]));
 
+    svg.on("click", () => {
+        const id = nodes.length;
+        nodes.push(new MyNode(id));
+        links.push(new MyLink(nodes[0], nodes[id]));
+    });
+
     const force = d3.layout.force()
         .nodes(nodes)
         .links(links)
