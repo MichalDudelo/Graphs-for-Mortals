@@ -6,5 +6,5 @@
             "removeComments": true,
             "preserveConstEnums": true
         },
-        "files": [ "src/Application.ts", "typings/index.d.ts" ]
+        "files": [ "typings/index.d.ts" ]
     }

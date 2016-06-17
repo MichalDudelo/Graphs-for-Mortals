@@ -9,10 +9,7 @@ gulp.task("default", function () {
     return browserify({
         basedir: ".",
         debug: true,
-        entries: ["src/Application.ts"],
-        cache: {},
-        packageCache: {},
-        files: ["typings/index.d.ts"]
+        entries: ["src/Application.ts"]
     })
     .plugin(tsify)
     .bundle()
