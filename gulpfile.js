@@ -1,17 +1,9 @@
-var gulp = require('gulp'), 
-    bowerMain = require('bower-main'),
-    concat = require('gulp-concat')
+var gulp = require('gulp'),
     browserify = require("browserify"),
     source = require('vinyl-source-stream'),
-    tsify = require("tsify");
-
-var bFiles = bowerMain('js', 'min.js');
-
-gulp.task('concBower', function() {
-    return gulp.src(bFiles.minified.concat(bFiles.minifiedNotFound))
-               .pipe(concat("bower.js"))
-               .pipe(gulp.dest('js'));
-});
+    tsify = require("tsify"),
+    buffer = require("vinyl-buffer"),
+    uglify = require("gulp-uglify");
 
 gulp.task("default", function () {
     return browserify({
@@ -24,14 +16,7 @@ gulp.task("default", function () {
     .plugin(tsify)
     .bundle()
     .pipe(source('bundle.js'))
+    .pipe(buffer())
+    .pipe(uglify())
     .pipe(gulp.dest("js"));
-});
-
-//https://www.npmjs.com/package/gulp-typings
-var gulpTypings = require("gulp-typings");
- 
-gulp.task("installTypings",function(){
-    var stream = gulp.src("./typings.json")
-        .pipe(gulpTypings());
-    return stream; 
 });
