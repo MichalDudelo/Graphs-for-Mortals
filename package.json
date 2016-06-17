@@ -21,5 +21,6 @@
     "init": "npm install && typings install"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "typings": "typings/index.d.ts"
 }
