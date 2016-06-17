@@ -9,7 +9,7 @@ class MyLink<T> {
     };
 }
 
-class MyNode<T> {
+export class MyNode<T> {
     x: number;
     y: number;
     fixed: boolean;
@@ -125,7 +125,8 @@ window.onload = () => {
             d3.select(this)
               .classed({ "disabled": true, "active": false })
               .on("click", null);
-            run(new algorithms.DepthFirstSearch());
+            const g = graph.GraphCreator.toAdjacencyGraph(nodes, links);
+            run(new algorithms.DepthFirstSearch(g, nodes[0]));
         });
 
     function run(toRun: algorithms.Algorithm) {

@@ -1,7 +1,7 @@
 import { Graph } from "../Graph"
 
 interface Algorithm {
-    run(graph: Graph): void;
+    run<T>(graph: Graph<T>): void;
 }
 
 export { Algorithm, Graph };

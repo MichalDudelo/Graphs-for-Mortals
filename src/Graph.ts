@@ -4,17 +4,19 @@ type Nodes<T> = Node<T>[];
 type Links<T> = Link<T>[];
 
 class GraphCreator<T> {
-    static toAdjacencyGraph<T>(nodes: Node<T>[], links: Link<T>[]): Graph {
-        return new AdjacencyGraph();
+    static toAdjacencyGraph<T>(nodes: Node<T>[], links: Link<T>[]): Graph<T> {
+        return new AdjacencyGraph<T>();
     }
 }
 
-interface Graph {
-
+interface Graph<T> {
+    nodes(): Nodes<T>;
 }
 
-class AdjacencyGraph implements Graph {
-
+class AdjacencyGraph<T> implements Graph<T> {
+    nodes(): Nodes<T> {
+        return [];
+    }
 }
 
 export { GraphCreator };
