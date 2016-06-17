@@ -1,5 +1,4 @@
 # How to run
-`npm`, `bower` and `tsd` are required
-* `npm run init` downloads dependencies 
-* `gulp concBower` concatenates bower dependencies to `js/bower.js`
+`npm` and `typings` are required
+* install dependencies with `npm install` and `typings install`
 * `gulp` compiles project to `js/bundle.js` file
