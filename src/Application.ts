@@ -18,8 +18,7 @@ class MyNode<T> {
 
 window.onload = () => {
     const height = 500, width = 900;
-    const svg = d3.select("body")
-        .append("svg")
+    const svg = d3.select("svg")
         .attr("width", width)
         .attr("height", height);
 
@@ -67,7 +66,7 @@ window.onload = () => {
         .classed("not-visited", true);
 
     const texts = node.append("text")
-        .text(d => "V" + d.id);
+        .text(d => "v" + d.id);
 
     let active: d3.Selection<any> = d3.select(".node")
         .classed("not-visited", false)
@@ -104,6 +103,7 @@ window.onload = () => {
             .attr("x2", link => link.target.x)
             .attr("y2", link => link.target.y);
 
+        /** this is much smoother than using transform on the group */
         circles.attr("cx", node => node.x)
             .attr("cy", node => node.y);
 
@@ -111,11 +111,9 @@ window.onload = () => {
             .attr("y", node => node.y - 15);
     });
 
-    d3.select("body")
-        .append("input")
+    d3.select("#runAlgorithm")
         .attr("value", "Run DFS")
-        .attr("type", "button")
-        .classed({ "btn": true, "btn-default": true, "active": true })
+        .classed({ "disabled": false, "active": true })
         .on("click", function () {
             d3.select(this)
               .classed({ "disabled": true, "active": false })

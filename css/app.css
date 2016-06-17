@@ -1,11 +1,11 @@
 .link {
   stroke: #000;
-  stroke-width: 1.5px;
+  stroke-width: 1.25px;
 }
 
 .node {
   stroke: #000;
-  stroke-width: 1.5px;
+  stroke-width: 1.25px;
 }
 
 .not-visited {
@@ -24,4 +24,9 @@
 
 g text {
     font-weight: bold;
+    font-size: 18px;
+    font-family: Consolas;
+    cursor: default;
+    -webkit-user-select: none;
+    user-select: none;
 }
