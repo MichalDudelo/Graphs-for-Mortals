@@ -1,34 +1,20 @@
-var gulp = require('gulp'), 
-    bowerMain = require('bower-main'),
-    concat = require('gulp-concat')
+var gulp = require('gulp'),
     browserify = require("browserify"),
     source = require('vinyl-source-stream'),
-    tsify = require("tsify");
-
-var bFiles = bowerMain('js', 'min.js');
-
-var tsconfig = {
-    noImplicitAny: true,
-    target: "es5",
-    module: "commonjs"
-};
-
-gulp.task('concBower', function() {
-    return gulp.src(bFiles.minified.concat(bFiles.minifiedNotFound))
-               .pipe(concat("bower.js"))
-               .pipe(gulp.dest('js'));
-});
+    tsify = require("tsify"),
+    buffer = require("vinyl-buffer"),
+    uglify = require("gulp-uglify");
 
 gulp.task("default", function () {
     return browserify({
         basedir: ".",
         debug: true,
-        entries: ["src/Application.ts"],
-        cache: {},
-        packageCache: {}    
+        entries: ["src/Application.ts"]
     })
-    .plugin(tsify, tsconfig)
+    .plugin(tsify)
     .bundle()
     .pipe(source('bundle.js'))
+    .pipe(buffer())
+    .pipe(uglify())
     .pipe(gulp.dest("js"));
 });
