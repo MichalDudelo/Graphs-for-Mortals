@@ -1,6 +1,6 @@
-/// <reference path="../typings/tsd.d.ts" />
 import * as graph from "./Graph"
 import * as algorithms from "./algorithms/Algorithm"
+import * as d3 from "d3"
 
 class MyLink<T> {
     constructor (public source: MyNode<T>,

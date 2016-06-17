@@ -7,12 +7,6 @@ var gulp = require('gulp'),
 
 var bFiles = bowerMain('js', 'min.js');
 
-var tsconfig = {
-    noImplicitAny: true,
-    target: "es5",
-    module: "commonjs"
-};
-
 gulp.task('concBower', function() {
     return gulp.src(bFiles.minified.concat(bFiles.minifiedNotFound))
                .pipe(concat("bower.js"))
@@ -25,10 +19,19 @@ gulp.task("default", function () {
         debug: true,
         entries: ["src/Application.ts"],
         cache: {},
-        packageCache: {}    
+        packageCache: {} 
     })
-    .plugin(tsify, tsconfig)
+    .plugin(tsify)
     .bundle()
     .pipe(source('bundle.js'))
     .pipe(gulp.dest("js"));
+});
+
+//https://www.npmjs.com/package/gulp-typings
+var gulpTypings = require("gulp-typings");
+ 
+gulp.task("installTypings",function(){
+    var stream = gulp.src("./typings.json")
+        .pipe(gulpTypings());
+    return stream; 
 });

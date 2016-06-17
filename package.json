@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "typescript-collections": "^1.1.2"
+    "definitely-typed-d3": "^1.0.0",
+    "typings": "^1.3.0"
   },
   "devDependencies": {
     "bower-main": "^0.2.14",
