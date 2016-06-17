@@ -5,5 +5,6 @@
             "noImplicitAny": true,
             "removeComments": true,
             "preserveConstEnums": true
-        }
+        },
+        "files": [ "src/Application.ts", "typings/index.d.ts" ]
     }

@@ -11,7 +11,8 @@ gulp.task("default", function () {
         debug: true,
         entries: ["src/Application.ts"],
         cache: {},
-        packageCache: {} 
+        packageCache: {},
+        files: ["typings/index.d.ts"]
     })
     .plugin(tsify)
     .bundle()
