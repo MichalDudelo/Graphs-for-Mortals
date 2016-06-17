@@ -1,8 +1,8 @@
 import { Graph } from "../Graph"
 
 interface Algorithm {
-
+    run(graph: Graph): void;
 }
 
-export { Algorithm };
+export { Algorithm, Graph };
 export * from "./DepthFirstSearch";

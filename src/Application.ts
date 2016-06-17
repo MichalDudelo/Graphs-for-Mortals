@@ -32,11 +32,11 @@ window.onload = () => {
 
     svg.on("contextmenu", () => event.preventDefault());
 
-    const nodes = [1, 2, 3, 4, 5]
+    const nodes = [0,1,2,3,4,5]
         .map(e => new MyNode(e));
 
-    const links = [[1, 2], [2, 3], [3, 4], [3, 5], [4, 5]]
-        .map(pair => new MyLink(nodes[pair[0] - 1], nodes[pair[1] - 1]));
+    const links = [[0,1], [0,5], [1,5], [5,4], [1,4], [3,4], [2,3], [1,2], [2,5]]
+        .map(pair => new MyLink(nodes[pair[0]], nodes[pair[1]]));
 
     const force = d3.layout.force()
         .nodes(nodes)
@@ -58,13 +58,20 @@ window.onload = () => {
     const node = svg.selectAll(".node")
         .data(nodes)
         .enter()
-        .append("circle")
+        .append("g");
+        
+    const circles = node.append("circle")
         .classed("node", true)
-        .classed("not-visited", true)
         .attr("r", 12)
-        .call(drag);
+        .call(drag)
+        .classed("not-visited", true);
 
-    let active: d3.Selection<any> = d3.select(".node").classed("active", true);
+    const texts = node.append("text")
+        .text(d => "V" + d.id);
+
+    let active: d3.Selection<any> = d3.select(".node")
+        .classed("not-visited", false)
+        .classed("active", true);
 
     /** defaultPrevented is checked to distinguish 
         drag and click events. */
@@ -74,7 +81,7 @@ window.onload = () => {
         event.preventDefault();
         active.classed("not-visited", true)
             .classed("active", false);
-        active = d3.select(this);
+        active = d3.select(this).select("circle");
         active.classed("not-visited", false)
             .classed("active", true);
     });
@@ -97,7 +104,26 @@ window.onload = () => {
             .attr("x2", link => link.target.x)
             .attr("y2", link => link.target.y);
 
-        node.attr("cx", node => node.x)
+        circles.attr("cx", node => node.x)
             .attr("cy", node => node.y);
+
+        texts.attr("x", node => node.x - 15)
+            .attr("y", node => node.y - 15);
     });
+
+    d3.select("body")
+        .append("input")
+        .attr("value", "Run DFS")
+        .attr("type", "button")
+        .classed({ "btn": true, "btn-default": true, "active": true })
+        .on("click", function () {
+            d3.select(this)
+              .classed({ "disabled": true, "active": false })
+              .on("click", null);
+            run(new algorithms.DepthFirstSearch());
+        });
+
+    function run(toRun: algorithms.Algorithm) {
+        toRun.run(graph.GraphCreator.toAdjacencyGraph(nodes, links));
+    }
 };

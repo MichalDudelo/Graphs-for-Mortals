@@ -21,3 +21,7 @@
     fill: none;
     stroke-width: 1px;
 }
+
+g text {
+    font-weight: bold;
+}
