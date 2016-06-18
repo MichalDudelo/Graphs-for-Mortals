@@ -38,18 +38,18 @@ window.onload = () => {
     const links = [[0,1], [0,5], [1,5], [5,4], [1,4], [3,4], [2,3], [1,2], [2,5]]
         .map(pair => new MyLink(nodes[pair[0]], nodes[pair[1]]));
 
-    svg.on("click", () => {
+    /*svg.on("click", () => {
         const id = nodes.length;
         nodes.push(new MyNode(id));
         links.push(new MyLink(nodes[0], nodes[id]));
-    });
+    });*/
 
     const force = d3.layout.force()
         .nodes(nodes)
         .links(links)
         .size([width, height])
-        .linkDistance(100)
-        .charge(-200)
+        .linkDistance(150)
+        .charge(-300)
         .start();
 
     const link = svg.selectAll(".link")
@@ -65,7 +65,7 @@ window.onload = () => {
         .data(nodes)
         .enter()
         .append("g");
-        
+
     const circles = node.append("circle")
         .classed("node", true)
         .attr("r", 12)
@@ -104,7 +104,9 @@ window.onload = () => {
         d3.select(this).classed("fixed", d.fixed = true);
     }
 
-    force.on("tick", function() {
+    force.on("tick", tick);
+
+    function tick () {
         link.attr("x1", link => link.source.x)
             .attr("y1", link => link.source.y)
             .attr("x2", link => link.target.x)
@@ -116,7 +118,26 @@ window.onload = () => {
 
         texts.attr("x", node => node.x - 15)
             .attr("y", node => node.y - 15);
-    });
+    }
+
+    function transitionTick () {
+        const duration = 1500;
+
+        link.transition().duration(duration)
+            .attr("x1", link => link.source.x)
+            .attr("y1", link => link.source.y)
+            .attr("x2", link => link.target.x)
+            .attr("y2", link => link.target.y);
+
+        /** this is much smoother than using transform on the group */
+        circles.transition().duration(duration)
+            .attr("cx", node => node.x)
+            .attr("cy", node => node.y);
+
+        texts.transition().duration(duration)
+            .attr("x", node => node.x - 15)
+            .attr("y", node => node.y - 15);
+    }
 
     d3.select("#runAlgorithm")
         .attr("value", "Run DFS")
@@ -127,7 +148,21 @@ window.onload = () => {
               .on("click", null);
             const g = graph.GraphCreator.toAdjacencyGraph(nodes, links);
             run(new algorithms.DepthFirstSearch(g, nodes[0]));
+            positionNodes();
         });
+
+    function positionNodes() {
+        const svgCenter = [width/2, height/2];
+        for(let i = 0; i < nodes.length; ++i) {
+            const angle = i * 360.0/nodes.length *  0.01745329252;
+            console.log(`${angle} ${ Math.sin(angle)} ${ Math.cos(angle)}`);
+            nodes[i].x = svgCenter[0] + Math.sin(angle) * 200;
+            nodes[i].y = svgCenter[1] - Math.cos(angle) * 200;
+            nodes[i].fixed = true;
+        }
+        transitionTick();
+        force.stop();
+    }
 
     function run(toRun: algorithms.Algorithm) {
         toRun.run(graph.GraphCreator.toAdjacencyGraph(nodes, links));
