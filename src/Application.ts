@@ -3,6 +3,7 @@ import { Graph, GraphCreator, Node, Link } from "./Graph";
 import { GraphDisplay } from "./GraphDisplay"
 import * as algorithms from "./algorithms/Algorithm";
 import * as d3 from "d3";
+import { ContextMenu } from "./ContextMenu";
 
 window.onload = () => {
     const height = 500, width = 900;
@@ -41,6 +42,31 @@ window.onload = () => {
     graphDisplay.updateGraph();
     updateListeners();
 
+    const menu = new ContextMenu();
+    menu.addItem("Release node", releaseNode);
+    menu.addItem("Set active", setActive);
+
+    d3.select("body").on("click", menu.close);
+
+    function releaseNode() {
+        event.preventDefault();
+        d3.select(this)
+          .classed("fixed", d => d.fixed = false);
+        force.resume();
+    }
+
+    let active: d3.Selection<any> = d3.select(".node")
+        .classed({"not-visited": false, "active": true});
+
+    function setActive(d: Node<any>) {
+        if (event.defaultPrevented)
+            return;
+        event.preventDefault();
+        active.classed({"not-visited": true, "active": false});
+        active = d3.select(this);
+        active.classed({"not-visited": false, "active": true});
+    }
+
     type AnyNode = Node<any>; 
 
     function updateListeners() {
@@ -50,24 +76,17 @@ window.onload = () => {
         nodesSelection.on("contextmenu", onNodeRightClick);
     }
 
-    let active: d3.Selection<any> = d3.select(".node")
-        .classed({"not-visited": false, "active": true});
-
     /** defaultPrevented is checked to distinguish 
         drag and click events. */
     function onNodeClick() {
         if (event.defaultPrevented)
             return;
         event.preventDefault();
-        active.classed({"not-visited": true, "active": false});
-        active = d3.select(this);
-        active.classed({"not-visited": false, "active": true});
+        setActive.call(this);
     }
 
-    function onNodeRightClick(d: AnyNode) {
-        event.preventDefault();
-        d3.select(this).classed("fixed", d.fixed = false);
-        force.resume();
+    function onNodeRightClick(d: Node<any>) {
+        menu.show(d.x ? d.x : 0, d.y ? d.y : 0, this);
     }
 
     function onSvgClick() {
