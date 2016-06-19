@@ -2,12 +2,17 @@
 import { Graph, Link, Node } from "./Graph"
 import * as d3 from "d3"
 
+type DragBehaviour = d3.behavior.Drag<d3.layout.force.Node>;
+
 export class GraphDisplay {
     private nodeSize = 15;
     private svg: d3.Selection<any>;
+    private nodeDrag: DragBehaviour;
 
-    constructor(public graph: Graph<number>) { 
+    constructor(public graph: Graph<number>, drag?: DragBehaviour) { 
         this.svg = d3.select("svg");
+        if(drag)
+            this.nodeDrag = drag;
     };
 
     updateLinks(): void {
@@ -48,7 +53,10 @@ export class GraphDisplay {
 
         groupsEnter.append("text")
             .text(d => "v" + d.id)
-            .classed("nodeName");
+            .classed("nodeName", true);
+
+        if(this.nodeDrag)
+            groupsEnter.select(".node").call(this.nodeDrag);
 
         this.updateNodesPositions(groups);
     }
@@ -56,10 +64,6 @@ export class GraphDisplay {
     private selectNodeGroups() {
         return this.svg.selectAll(".nodeGroup")
             .data(this.graph.nodes(), (node) => node.id.toString());
-    }
-
-    setDrag(fun: d3.behavior.Drag<d3.layout.force.Node>) {
-        this.selectNodeGroups().call(fun);
     }
 
     selectNodes() {

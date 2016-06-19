@@ -26,7 +26,6 @@ window.onload = () => {
         .map(pair => new Link(nodes[pair[0]], nodes[pair[1]]));
 
     const graph = GraphCreator.toTestGraph(nodes, links);
-    const graphDisplay = new GraphDisplay(graph);
 
 /*    svg.on("click", () => {
         const id = nodes.length;
@@ -47,7 +46,8 @@ window.onload = () => {
     const drag = force.drag()
         .on("dragstart", dragstart);
 
-    graphDisplay.setDrag(drag);
+    const graphDisplay = new GraphDisplay(graph, drag);
+    graphDisplay.updateGraph();
     graphDisplay.updateGraph();
 
     type AnyNode = Node<any>;
@@ -77,6 +77,7 @@ window.onload = () => {
     function onNodeRightClick(d: AnyNode) {
         event.preventDefault();
         d3.select(this).classed("fixed", d.fixed = false);
+        force.resume();
     }
 
     function dragstart(d: AnyNode) {
