@@ -1,21 +1,8 @@
 /// <reference path="../typings/index.d.ts" />
-import * as graph from "./Graph";
+import { Graph, GraphCreator, Node, Link } from "./Graph";
+import { GraphDisplay } from "./GraphDisplay"
 import * as algorithms from "./algorithms/Algorithm";
 import * as d3 from "d3";
-
-class MyLink<T> {
-    constructor (public source: MyNode<T>,
-        public target: MyNode<T>) {
-    };
-}
-
-export class MyNode<T> {
-    x: number;
-    y: number;
-    fixed: boolean;
-    constructor(public id: T) {
-    }
-}
 
 window.onload = () => {
     const height = 500, width = 900;
@@ -33,47 +20,42 @@ window.onload = () => {
     svg.on("contextmenu", () => event.preventDefault());
 
     const nodes = [0,1,2,3,4,5]
-        .map(e => new MyNode(e));
+        .map(e => new Node(e));
 
     const links = [[0,1], [0,5], [1,5], [5,4], [1,4], [3,4], [2,3], [1,2], [2,5]]
-        .map(pair => new MyLink(nodes[pair[0]], nodes[pair[1]]));
+        .map(pair => new Link(nodes[pair[0]], nodes[pair[1]]));
 
-    /*svg.on("click", () => {
+    const graph = GraphCreator.toTestGraph(nodes, links);
+    const graphDisplay = new GraphDisplay(graph);
+
+/*    svg.on("click", () => {
         const id = nodes.length;
-        nodes.push(new MyNode(id));
-        links.push(new MyLink(nodes[0], nodes[id]));
+        nodes.push(new Node(id));
+        links.push(new Link(nodes[0], nodes[id]));
+        upd();
+        force.start();
     });*/
 
     const force = d3.layout.force()
-        .nodes(nodes)
-        .links(links)
+        .nodes(graph.nodes())
+        .links(graph.links())
         .size([width, height])
         .linkDistance(150)
         .charge(-300)
         .start();
 
-    const link = svg.selectAll(".link")
-        .data(links)
-        .enter()
-        .append("line")
-        .classed("link", true);
-
     const drag = force.drag()
         .on("dragstart", dragstart);
 
-    const node = svg.selectAll(".node")
-        .data(nodes)
-        .enter()
-        .append("g");
+    graphDisplay.setDrag(drag);
+    graphDisplay.updateGraph();
 
-    const circles = node.append("circle")
-        .classed("node", true)
-        .attr("r", 12)
-        .call(drag)
-        .classed("not-visited", true);
+    type AnyNode = Node<any>;
 
-    const texts = node.append("text")
-        .text(d => "v" + d.id);
+    const nodesSelection = graphDisplay.selectNodes();    
+
+    nodesSelection.on("click", onNodeClick);
+    nodesSelection.on("contextmenu", onNodeRightClick);
 
     let active: d3.Selection<any> = d3.select(".node")
         .classed("not-visited", false)
@@ -81,63 +63,28 @@ window.onload = () => {
 
     /** defaultPrevented is checked to distinguish 
         drag and click events. */
-    node.on("click", function() {
+    function onNodeClick() {
         if (event.defaultPrevented)
-            return;
+                return;
         event.preventDefault();
         active.classed("not-visited", true)
             .classed("active", false);
         active = d3.select(this).select("circle");
         active.classed("not-visited", false)
             .classed("active", true);
-    });
+    }
 
-    type AnyNode = MyNode<any>;
-
-    node.on("contextmenu", function(d: AnyNode) {
+    function onNodeRightClick(d: AnyNode) {
         event.preventDefault();
         d3.select(this).classed("fixed", d.fixed = false);
-    });
+    }
 
     function dragstart(d: AnyNode) {
-        event.stopPropagation();
+        event.preventDefault();
         d3.select(this).classed("fixed", d.fixed = true);
     }
 
-    force.on("tick", tick);
-
-    function tick () {
-        link.attr("x1", link => link.source.x)
-            .attr("y1", link => link.source.y)
-            .attr("x2", link => link.target.x)
-            .attr("y2", link => link.target.y);
-
-        /** this is much smoother than using transform on the group */
-        circles.attr("cx", node => node.x)
-            .attr("cy", node => node.y);
-
-        texts.attr("x", node => node.x - 15)
-            .attr("y", node => node.y - 15);
-    }
-
-    function transitionTick () {
-        const duration = 1500;
-
-        link.transition().duration(duration)
-            .attr("x1", link => link.source.x)
-            .attr("y1", link => link.source.y)
-            .attr("x2", link => link.target.x)
-            .attr("y2", link => link.target.y);
-
-        /** this is much smoother than using transform on the group */
-        circles.transition().duration(duration)
-            .attr("cx", node => node.x)
-            .attr("cy", node => node.y);
-
-        texts.transition().duration(duration)
-            .attr("x", node => node.x - 15)
-            .attr("y", node => node.y - 15);
-    }
+    force.on("tick", e => graphDisplay.updatePositions());
 
     d3.select("#runAlgorithm")
         .attr("value", "Run DFS")
@@ -146,25 +93,28 @@ window.onload = () => {
             d3.select(this)
               .classed({ "disabled": true, "active": false })
               .on("click", null);
-            const g = graph.GraphCreator.toAdjacencyGraph(nodes, links);
-            run(new algorithms.DepthFirstSearch(g, nodes[0]));
-            positionNodes();
+            setNodesOnCircle();
         });
 
-    function positionNodes() {
+    function setNodesOnCircle() {
         const svgCenter = [width/2, height/2];
+        const dAngle = 360.0/nodes.length;
+        const multiplier = 200;
         for(let i = 0; i < nodes.length; ++i) {
-            const angle = i * 360.0/nodes.length *  0.01745329252;
-            console.log(`${angle} ${ Math.sin(angle)} ${ Math.cos(angle)}`);
-            nodes[i].x = svgCenter[0] + Math.sin(angle) * 200;
-            nodes[i].y = svgCenter[1] - Math.cos(angle) * 200;
+            const angle = toRad(i * dAngle);
+            const xpos = svgCenter[0] + Math.sin(angle) * multiplier;
+            const ypos = svgCenter[1] - Math.cos(angle) * multiplier;
+            nodes[i].x = xpos;
+            nodes[i].px = xpos;
+            nodes[i].y = ypos;
+            nodes[i].py = ypos;
             nodes[i].fixed = true;
         }
-        transitionTick();
+        graphDisplay.updateNodesPositionsOverTime();
         force.stop();
     }
 
-    function run(toRun: algorithms.Algorithm) {
-        toRun.run(graph.GraphCreator.toAdjacencyGraph(nodes, links));
+    function toRad(degrees: number) {
+        return degrees * Math.PI / 180.0;
     }
 };
