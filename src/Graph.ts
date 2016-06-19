@@ -5,11 +5,11 @@ class Link<T> {
 }
 
 class Node<T> {
-    x: number;
-    y: number;
-    px: number;
-    py: number;
-    fixed: boolean;
+    x = 0;
+    y = 0;
+    px = 0;
+    py = 0;
+    fixed = false;
     constructor(public id: T) {
     }
 }

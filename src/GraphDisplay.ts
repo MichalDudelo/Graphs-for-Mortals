@@ -19,7 +19,7 @@ export class GraphDisplay {
         const links = this.selectLinks();
         links.exit().remove();
         links.enter()
-            .append("line")
+            .insert("line", "line")
             .classed("link", true);
         this.updateLinksPositions(links);
     }
@@ -77,7 +77,8 @@ export class GraphDisplay {
             .attr("cx", node => node.x)
             .attr("cy", node => node.y);
 
-        selection.select(".nodeName").attr("x", node => node.x - this.nodeSize)
+        selection.select(".nodeName")
+            .attr("x", node => node.x - this.nodeSize)
             .attr("y", node => node.y - this.nodeSize);
     }
 

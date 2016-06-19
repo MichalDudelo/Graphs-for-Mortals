@@ -6,15 +6,12 @@ import * as d3 from "d3";
 
 window.onload = () => {
     const height = 500, width = 900;
+
     const svg = d3.select("svg")
-        .attr("width", width)
-        .attr("height", height);
+        .attr({"width": width, "height": height});
 
     svg.append("rect")
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("width", width)
-        .attr("height", height)
+        .attr({"x": 0, "y": 0, "width": width, "height": height})
         .classed("svg-border", true);
 
     svg.on("contextmenu", () => event.preventDefault());
@@ -27,13 +24,7 @@ window.onload = () => {
 
     const graph = GraphCreator.toTestGraph(nodes, links);
 
-/*    svg.on("click", () => {
-        const id = nodes.length;
-        nodes.push(new Node(id));
-        links.push(new Link(nodes[0], nodes[id]));
-        upd();
-        force.start();
-    });*/
+    svg.on("click", onSvgClick);
 
     const force = d3.layout.force()
         .nodes(graph.nodes())
@@ -48,18 +39,19 @@ window.onload = () => {
 
     const graphDisplay = new GraphDisplay(graph, drag);
     graphDisplay.updateGraph();
-    graphDisplay.updateGraph();
+    updateListeners();
 
-    type AnyNode = Node<any>;
+    type AnyNode = Node<any>; 
 
-    const nodesSelection = graphDisplay.selectNodes();    
-
-    nodesSelection.on("click", onNodeClick);
-    nodesSelection.on("contextmenu", onNodeRightClick);
+    function updateListeners() {
+        const nodesSelection = graphDisplay.selectNodes();    
+    
+        nodesSelection.on("click", onNodeClick);
+        nodesSelection.on("contextmenu", onNodeRightClick);
+    }
 
     let active: d3.Selection<any> = d3.select(".node")
-        .classed("not-visited", false)
-        .classed("active", true);
+        .classed({"not-visited": false, "active": true});
 
     /** defaultPrevented is checked to distinguish 
         drag and click events. */
@@ -67,17 +59,26 @@ window.onload = () => {
         if (event.defaultPrevented)
             return;
         event.preventDefault();
-        active.classed("not-visited", true)
-            .classed("active", false);
+        active.classed({"not-visited": true, "active": false});
         active = d3.select(this);
-        active.classed("not-visited", false)
-            .classed("active", true);
+        active.classed({"not-visited": false, "active": true});
     }
 
     function onNodeRightClick(d: AnyNode) {
         event.preventDefault();
         d3.select(this).classed("fixed", d.fixed = false);
         force.resume();
+    }
+
+    function onSvgClick() {
+        if (event.defaultPrevented)
+            return;
+        const id = nodes.length;
+        nodes.push(new Node(id));
+        links.push(new Link(nodes[0], nodes[id]));
+        graphDisplay.updateGraph();
+        updateListeners();
+        force.start();
     }
 
     function dragstart(d: AnyNode) {
