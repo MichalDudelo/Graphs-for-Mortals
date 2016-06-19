@@ -15,6 +15,7 @@ export class GraphDisplay {
             this.nodeDrag = drag;
     };
 
+    /** Links display full update */
     updateLinks(): void {
         const links = this.selectLinks();
         links.exit().remove();
@@ -24,17 +25,16 @@ export class GraphDisplay {
         this.updateLinksPositions(links);
     }
 
-    private selectLinks() {
-        return this.svg.selectAll(".link")
-            .data(this.graph.links(), (link) => (link.source.id + " " + link.target.id));
-    }
-
-    updateLinksPositions(links?: d3.selection.Update<Link<number>>): void {
-        const selection = links ? links : this.selectLinks();
+    private updateLinksPositions(selection: d3.selection.Update<any> | d3.Transition<any>) {
         selection.attr("x1", link => link.source.x)
             .attr("y1", link => link.source.y)
             .attr("x2", link => link.target.x)
             .attr("y2", link => link.target.y);
+    }
+
+    private selectLinks() {
+        return this.svg.selectAll(".link")
+            .data(this.graph.links(), (link) => (link.source.id + " " + link.target.id));
     }
 
     updateNodes(): void {
@@ -48,7 +48,7 @@ export class GraphDisplay {
 
         groupsEnter.append("circle")
             .classed("node", true)
-            .attr("r", 12)
+            .attr("r", this.nodeSize)
             .classed("not-visited", true);
 
         groupsEnter.append("text")
@@ -61,18 +61,7 @@ export class GraphDisplay {
         this.updateNodesPositions(groups);
     }
 
-    private selectNodeGroups() {
-        return this.svg.selectAll(".nodeGroup")
-            .data(this.graph.nodes(), (node) => node.id.toString());
-    }
-
-    selectNodes() {
-        return this.selectNodeGroups().select(".node");
-    }
-
-    updateNodesPositions(group?: d3.selection.Update<Node<number>>): void {
-        const selection = group ? group : this.selectNodeGroups();
-
+    private updateNodesPositions(selection: d3.selection.Update<any> | d3.Transition<any>) {
         selection.select(".node")
             .attr("cx", node => node.x)
             .attr("cy", node => node.y);
@@ -82,28 +71,13 @@ export class GraphDisplay {
             .attr("y", node => node.y - this.nodeSize);
     }
 
-    // TODO Transition and Update cant be used interchangeably. This is duplication
-    // of updateNodesPosition though.
-    updateNodesPositionsOverTime(): void {
-        const groups = this.selectNodeGroups();
-        const duration = 1500;
+    private selectNodeGroups() {
+        return this.svg.selectAll(".nodeGroup")
+            .data(this.graph.nodes(), (node) => node.id.toString());
+    }
 
-        groups.transition().duration(duration)
-            .select(".node")
-            .attr("cx", node => node.x)
-            .attr("cy", node => node.y);
-
-        groups.transition().duration(duration)
-            .select(".nodeName")
-            .attr("x", node => node.x - this.nodeSize)
-            .attr("y", node => node.y - this.nodeSize);
-
-        this.selectLinks()
-            .transition().duration(duration)
-            .attr("x1", link => link.source.x)
-            .attr("y1", link => link.source.y)
-            .attr("x2", link => link.target.x)
-            .attr("y2", link => link.target.y);
+    selectNodes() {
+        return this.selectNodeGroups().select(".node");
     }
 
     updateGraph(): void {
@@ -112,7 +86,13 @@ export class GraphDisplay {
     }
 
     updatePositions(): void {
-        this.updateLinksPositions();
-        this.updateNodesPositions();
+        this.updateLinksPositions(this.selectLinks());
+        this.updateNodesPositions(this.selectNodeGroups());
+    }
+
+    updatePositionsOverTime(): void {
+        const duration = 1500;
+        this.updateLinksPositions(this.selectLinks().transition().duration(duration)); 
+        this.updateNodesPositions(this.selectNodeGroups().transition().duration(duration));           
     }
 }

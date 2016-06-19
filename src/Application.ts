@@ -112,7 +112,7 @@ window.onload = () => {
             nodes[i].py = ypos;
             nodes[i].fixed = true;
         }
-        graphDisplay.updateNodesPositionsOverTime();
+        graphDisplay.updatePositionsOverTime();
         force.stop();
     }
 
