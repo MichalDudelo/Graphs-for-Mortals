@@ -92,9 +92,9 @@ window.onload = () => {
         .attr("value", "Run DFS")
         .classed({ "disabled": false, "active": true })
         .on("click", function () {
-            d3.select(this)
+            /*d3.select(this)
               .classed({ "disabled": true, "active": false })
-              .on("click", null);
+              .on("click", null);*/
             setNodesOnCircle();
         });
 
