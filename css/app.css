@@ -47,7 +47,7 @@ g text {
 
 .d3-context-menu ul {
   list-style-type: none;
-  margin: 4px 0px;
+  margin: 0px 0px;
   padding: 0px;
   cursor: default;
 }

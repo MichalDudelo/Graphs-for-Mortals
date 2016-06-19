@@ -81,7 +81,6 @@ window.onload = () => {
     function onNodeClick() {
         if (event.defaultPrevented)
             return;
-        event.preventDefault();
         setActive.call(this);
     }
 
@@ -101,7 +100,7 @@ window.onload = () => {
     }
 
     function dragstart(d: AnyNode) {
-        event.preventDefault();
+        event.stopPropagation();
         d3.select(this).classed("fixed", d.fixed = true);
     }
 
