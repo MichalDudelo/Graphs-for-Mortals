@@ -15,7 +15,7 @@ window.onload = () => {
         .attr({"x": 0, "y": 0, "width": width, "height": height})
         .classed("svg-border", true);
 
-    svg.on("contextmenu", () => event.preventDefault());
+    svg.on("contextmenu", () => (d3.event as Event).preventDefault());
 
     const nodes = [0,1,2,3,4,5]
         .map(e => new Node(e));
@@ -49,7 +49,7 @@ window.onload = () => {
     d3.select("body").on("click", menu.close);
 
     function releaseNode() {
-        event.preventDefault();
+        (d3.event as Event).preventDefault()
         d3.select(this)
           .classed("fixed", d => d.fixed = false);
         force.resume();
@@ -59,9 +59,9 @@ window.onload = () => {
         .classed({"not-visited": false, "active": true});
 
     function setActive(d: Node<any>) {
-        if (event.defaultPrevented)
+        if ((d3.event as Event).defaultPrevented)
             return;
-        event.preventDefault();
+        (d3.event as Event).preventDefault()
         active.classed({"not-visited": true, "active": false});
         active = d3.select(this);
         active.classed({"not-visited": false, "active": true});
@@ -79,7 +79,7 @@ window.onload = () => {
     /** defaultPrevented is checked to distinguish 
         drag and click events. */
     function onNodeClick() {
-        if (event.defaultPrevented)
+        if ((d3.event as Event).defaultPrevented)
             return;
         setActive.call(this);
     }
@@ -89,7 +89,7 @@ window.onload = () => {
     }
 
     function onSvgClick() {
-        if (event.defaultPrevented)
+        if ((d3.event as Event).defaultPrevented)
             return;
         const id = nodes.length;
         nodes.push(new Node(id));
@@ -100,7 +100,7 @@ window.onload = () => {
     }
 
     function dragstart(d: AnyNode) {
-        event.stopPropagation();
+        (d3.event as d3.BaseEvent).sourceEvent.stopPropagation();
         d3.select(this).classed("fixed", d.fixed = true);
     }
 

@@ -39,7 +39,7 @@ export class ContextMenu {
             .style('top', y + 'px')
             .style('display', 'block');
 
-        event.preventDefault();
+        (d3.event as Event).preventDefault();
     }
 
     create() {
