@@ -65,11 +65,11 @@ window.onload = () => {
         drag and click events. */
     function onNodeClick() {
         if (event.defaultPrevented)
-                return;
+            return;
         event.preventDefault();
         active.classed("not-visited", true)
             .classed("active", false);
-        active = d3.select(this).select("circle");
+        active = d3.select(this);
         active.classed("not-visited", false)
             .classed("active", true);
     }
