@@ -46,6 +46,7 @@ window.onload = () => {
     menu.addItem("Release node", releaseNode);
     menu.addItem("Set active", setActive);
     menu.addItem("Remove node", removeNode);
+    menu.addItem("Add vertex", addVertex);
 
     d3.select("body").on("click", menu.close);
 
@@ -76,6 +77,11 @@ window.onload = () => {
         active.classed({"not-visited": true, "active": false});
         active = d3.select(this);
         active.classed({"not-visited": false, "active": true});
+    }
+    
+    function addVertex() {
+        (d3.event as Event).preventDefault();
+        graph.addLink(1,2);    
     }
 
     type AnyNode = Node<any>; 
