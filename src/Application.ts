@@ -17,13 +17,13 @@ window.onload = () => {
 
     svg.on("contextmenu", () => (d3.event as Event).preventDefault());
 
-    const nodes = [0,1,2,3,4,5]
+    const initNodes = [0,1,2,3,4,5]
         .map(e => new Node(e));
 
-    const links = [[0,1], [0,5], [1,5], [5,4], [1,4], [3,4], [2,3], [1,2], [2,5]]
-        .map(pair => new Link(nodes[pair[0]], nodes[pair[1]]));
+    const initLinks = [[0,1], [0,5], [1,5], [5,4], [1,4], [3,4], [2,3], [1,2], [2,5]]
+        .map(pair => new Link(initNodes[pair[0]], initNodes[pair[1]]));
 
-    const graph = GraphCreator.toTestGraph(nodes, links);
+    const graph = GraphCreator.toTestGraph(initNodes, initLinks);
 
     svg.on("click", onSvgClick);
 
@@ -45,6 +45,7 @@ window.onload = () => {
     const menu = new ContextMenu();
     menu.addItem("Release node", releaseNode);
     menu.addItem("Set active", setActive);
+    menu.addItem("Remove node", removeNode);
 
     d3.select("body").on("click", menu.close);
 
@@ -53,6 +54,15 @@ window.onload = () => {
         d3.select(this)
           .classed("fixed", d => d.fixed = false);
         force.resume();
+    }
+
+    function removeNode() {
+        (d3.event as Event).preventDefault();
+        const nodeToRemove: Node<any> = d3.select(this).datum();
+        graph.removeNode(nodeToRemove.id);
+        graphDisplay.updateGraph();
+        force.stop();
+        force.nodes(graph.nodes()).links(graph.links()).start();
     }
 
     let active: d3.Selection<any> = d3.select(".node")
@@ -91,9 +101,8 @@ window.onload = () => {
     function onSvgClick() {
         if ((d3.event as Event).defaultPrevented)
             return;
-        const id = nodes.length;
-        nodes.push(new Node(id));
-        links.push(new Link(nodes[0], nodes[id]));
+        const id = Math.max(...graph.nodes().map(n => n.id)) + 1;
+        graph.addNode(id);
         graphDisplay.updateGraph();
         updateListeners();
         force.start();
@@ -107,7 +116,7 @@ window.onload = () => {
     force.on("tick", e => graphDisplay.updatePositions());
 
     d3.select("#runAlgorithm")
-        .attr("value", "Run DFS")
+        .attr("value", "Circle layout")
         .classed({ "disabled": false, "active": true })
         .on("click", function () {
             /*d3.select(this)
@@ -117,6 +126,7 @@ window.onload = () => {
         });
 
     function setNodesOnCircle() {
+        const nodes = graph.nodes();
         const svgCenter = [width/2, height/2];
         const dAngle = 360.0/nodes.length;
         const multiplier = 200;

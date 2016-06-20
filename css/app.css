@@ -31,6 +31,10 @@ g text {
     user-select: none;
 }
 
+svg {
+  display: block;
+}
+
 .d3-context-menu {
   position: absolute;
   display: none;
