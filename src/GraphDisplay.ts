@@ -3,6 +3,7 @@ import { Graph, Link, Node } from "./Graph"
 import * as d3 from "d3"
 
 type DragBehaviour = d3.behavior.Drag<d3.layout.force.Node>;
+type TransitionOrUpdate = d3.selection.Update<any> | d3.Transition<any>;
 
 export class GraphDisplay {
     private nodeSize = 15;
@@ -25,7 +26,7 @@ export class GraphDisplay {
         this.updateLinksPositions(links);
     }
 
-    private updateLinksPositions(selection: d3.selection.Update<any> | d3.Transition<any>) {
+    private updateLinksPositions(selection: TransitionOrUpdate) {
         selection.attr("x1", link => link.source.x)
             .attr("y1", link => link.source.y)
             .attr("x2", link => link.target.x)
@@ -61,7 +62,8 @@ export class GraphDisplay {
         this.updateNodesPositions(groups);
     }
 
-    private updateNodesPositions(selection: d3.selection.Update<any> | d3.Transition<any>) {
+    /** Selection contains .nodeGroup - <g> DOM element. */
+    private updateNodesPositions(selection: TransitionOrUpdate) {
         selection.select(".node")
             .attr("cx", node => node.x)
             .attr("cy", node => node.y);
@@ -73,7 +75,7 @@ export class GraphDisplay {
 
     private selectNodeGroups() {
         return this.svg.selectAll(".nodeGroup")
-            .data(this.graph.nodes(), (node) => node.id.toString());
+            .data(this.graph.nodes(), node => node.id.toString());
     }
 
     selectNodes() {
