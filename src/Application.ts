@@ -60,6 +60,7 @@ window.onload = () => {
         (d3.event as Event).preventDefault();
         const nodeToRemove: Node<any> = d3.select(this).datum();
         graph.removeNode(nodeToRemove.id);
+        graph.nodes().forEach(n => n.fixed = false);
         graphDisplay.updateGraph();
         force.stop();
         force.nodes(graph.nodes()).links(graph.links()).start();
@@ -115,15 +116,12 @@ window.onload = () => {
 
     force.on("tick", e => graphDisplay.updatePositions());
 
-    d3.select("#runAlgorithm")
+    d3.select("#circleLayout")
         .attr("value", "Circle layout")
-        .classed({ "disabled": false, "active": true })
-        .on("click", function () {
-            /*d3.select(this)
-              .classed({ "disabled": true, "active": false })
-              .on("click", null);*/
-            setNodesOnCircle();
-        });
+        .on("click", setNodesOnCircle);
+
+    d3.select("#runAlgorithm")
+        .attr("value", "Run example algorithm");
 
     function setNodesOnCircle() {
         const nodes = graph.nodes();
